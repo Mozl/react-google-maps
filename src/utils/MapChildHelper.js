@@ -1,13 +1,22 @@
 /* global google */
 /* eslint-disable no-param-reassign */
-import _ from "lodash"
 
-function rdcUncontrolledAndControlledProps(acc, value, key) {
-  if (_.has(acc.prevProps, key)) {
+function lowerFirst(string) {
+  // Not Unicode safe, but using [...string] compiles to Array.from which require babel-polyfill, which is a 100k+ library
+  const loweredHead = string.charAt(0).toLowerCase()
+  const unchangedTail = string.slice(1)
+
+  return loweredHead + unchangedTail
+}
+
+function rdcUncontrolledAndControlledProps(acc, val, index, arr) {
+  let key = arr[index]
+  console.log("rdcUncontrolledAndControlledProps: ", key)
+  if (Object.keys(acc.prevProps).includes(key)) {
     const match = key.match(/^default(\S+)/)
     if (match) {
-      const unprefixedKey = _.lowerFirst(match[1])
-      if (!_.has(acc.nextProps, unprefixedKey)) {
+      const unprefixedKey = lowerFirst(match[1])
+      if (!Object.keys(acc.nextProps).includes(unprefixedKey)) {
         acc.nextProps[unprefixedKey] = acc.prevProps[key]
       }
     } else {
@@ -18,19 +27,23 @@ function rdcUncontrolledAndControlledProps(acc, value, key) {
 }
 
 function applyUpdaterToNextProps(updaterMap, prevProps, nextProps, instance) {
-  _.forEach(updaterMap, (fn, key) => {
+  for (let key of Object.keys(updaterMap)) {
+    let fn = updaterMap[key]
     const nextValue = nextProps[key]
     if (nextValue !== prevProps[key]) {
       fn(instance, nextValue)
     }
-  })
+  }
 }
 
 export function construct(propTypes, updaterMap, prevProps, instance) {
-  const { nextProps } = _.reduce(propTypes, rdcUncontrolledAndControlledProps, {
-    nextProps: {},
-    prevProps,
-  })
+  const { nextProps } = Object.keys(propTypes).reduce(
+    rdcUncontrolledAndControlledProps,
+    {
+      nextProps: {},
+      prevProps,
+    }
+  )
   applyUpdaterToNextProps(
     updaterMap,
     {
@@ -62,10 +75,10 @@ export function componentWillUnmount(component) {
 }
 
 function registerEvents(component, instance, eventMap) {
-  const registeredList = _.reduce(
-    eventMap,
-    (acc, googleEventName, onEventName) => {
-      if (_.isFunction(component.props[onEventName])) {
+  const registeredList = Object.keys(eventMap).reduce(
+    (acc, onEventName, index) => {
+      let googleEventName = eventMap[onEventName]
+      if (typeof component.props[onEventName] === "function") {
         acc.push(
           google.maps.event.addListener(
             instance,
@@ -79,12 +92,11 @@ function registerEvents(component, instance, eventMap) {
     []
   )
 
-  component.unregisterAllEvents = _.bind(
-    _.forEach,
-    null,
-    registeredList,
-    unregisterEvent
-  )
+  component.unregisterAllEvents = () => {
+    registeredList.forEach(event => {
+      unregisterEvent(event)
+    })
+  }
 }
 
 function unregisterEvent(registered) {
