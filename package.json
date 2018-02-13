@@ -1,5 +1,5 @@
 {
-  "name": "react-google-maps",
+  "name": "@opentable/react-google-maps-es6",
   "version": "9.4.5",
   "description": "React.js Google Maps integration component",
   "license": "MIT",
@@ -8,14 +8,24 @@
     "email": "developer@tomchentw.com",
     "url": "https://github.com/tomchentw"
   },
+  "contributors": [
+    {
+      "name": "Kim Ahlström",
+      "email": "kahlstrom@opentable.com"
+    },
+    {
+      "name": "Dipun Mistry",
+      "email": "dmistry@opentable.com"
+    }
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tomchentw/react-google-maps"
+    "url": "https://github.com/opentable/react-google-maps"
   },
   "bugs": {
-    "url": "https://github.com/tomchentw/react-google-maps/issues"
+    "url": "https://github.com/opentable/react-google-maps/issues"
   },
-  "homepage": "https://tomchentw.github.io/react-google-maps/",
+  "homepage": "https://github.com/opentable/react-google-maps",
   "main": "lib/index.js",
   "files": ["types/index.d.ts", "lib/", "src/", "CHANGELOG.md"],
   "keywords": [
