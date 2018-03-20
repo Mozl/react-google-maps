@@ -11,7 +11,6 @@ function lowerFirst(string) {
 
 function rdcUncontrolledAndControlledProps(acc, val, index, arr) {
   let key = arr[index]
-  console.log("rdcUncontrolledAndControlledProps: ", key)
   if (Object.keys(acc.prevProps).includes(key)) {
     const match = key.match(/^default(\S+)/)
     if (match) {
